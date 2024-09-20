@@ -1,15 +1,12 @@
 #!/bin/bash
 
-if [[ "${target_platform}" == "osx-arm64" ]]; then
-  go build -v -o $PREFIX/bin/go-licenses
-
-  # Build for osx-64 as this can also be run in cross-compilation mode.
-  GOARCH=amd64 go build -v -o go-licenses-native
-  ./go-licenses-native save . --save_path=./license-files
+if [[ "${target_platform}" == "win-64" ]]; then
+  go build -v -o $PREFIX/bin/go-licenses.exe
 else
-  go install -v github.com/google/go-licenses
-  go-licenses save . --save_path=./license-files
+  go build -v -o $PREFIX/bin/go-licenses
 fi
+
+go-licenses save . --save_path=./license-files
 
 # TODO: remove if not actually needed, see #6
 # rm -r ./license-files/github.com/google/licenseclassifier/licenses
