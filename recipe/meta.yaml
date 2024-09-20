@@ -5,29 +5,37 @@ package:
   version: {{ version }}
 
 source:
-  - url: https://github.com/google/go-licenses/archive/refs/tags/v{{ version }}.tar.gz
-    sha256: 70c1ceb7c342ceb79b63a76caafb13ea3796a51715c742a482eb9d85277311e7
+  url: https://github.com/google/go-licenses/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 70c1ceb7c342ceb79b63a76caafb13ea3796a51715c742a482eb9d85277311e7
 
 build:
   number: 0
+  skip: true  # [s390x]
 
 requirements:
   build:
     - {{ compiler('go') }}
-    - posix  # [win]
   host:
   run:
     - go
 
 test:
+  requires:
+  source_files:
+    - LICENSE
+    - check.go
+    - e2e_test.go
+    - go.mod
+    - go.sum
+    - main.go
+    - report.go
+    - internal
+    - licenses
+    - testdata
   commands:
-    - git clone --depth=1 "https://github.com/google/go-licenses"
-    - cd go-licenses
     - go-licenses csv . | findstr "Apache-2.0 BSD-.-Clause MIT"             # [win]
     - go-licenses csv . | grep 'Apache-2\.0\|BSD-.-Clause\|MIT\|Unlicense'  # [not win]
-  requires:
-    - git
-    - go
+    - go test -v .                                                          # [not win]
 
 about:
   home: https://github.com/google/go-licenses
@@ -37,6 +45,12 @@ about:
     - LICENSE
     - license-files/
   summary: A tool to collect licenses from the dependency tree of a Go package in order to comply with redistribution terms.
+  description: |
+    go-licenses analyzes the dependency tree of a Go package/binary. It can output a report on the libraries used
+    and under what license they can be used. It can also collect all of the license documents, copyright notices and
+    source code into a directory in order to comply with license terms on redistribution.
+  doc_url: https://github.com/google/go-licenses/blob/master/README.md
+  dev_url: https://github.com/google/go-licenses
 
 extra:
   recipe-maintainers:
