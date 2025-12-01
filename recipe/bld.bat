@@ -1,14 +1,11 @@
-copy "%RECIPE_DIR%\build.sh" .
-if %errorlevel% neq 0 exit /b %errorlevel%
+@echo off
+setlocal
 
-set PREFIX=%PREFIX:\=/%
-set SRC_DIR=%SRC_DIR:\=/%
-set MSYSTEM=MINGW%ARCH%
-set MSYS2_PATH_TYPE=inherit
-set CHERE_INVOKING=1
+:: Ensure CGO is disabled for reproducible builds
+set CGO_ENABLED=0
 
-
-bash -lc "./build.sh"
+:: Build binary directly with Windows Go toolchain
+go build -v -o "%PREFIX%\bin\go-licenses.exe"
 if %errorlevel% neq 0 exit /b %errorlevel%
 
 exit /b 0
